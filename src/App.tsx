@@ -6,8 +6,11 @@ import { useState } from "react";
 import type { UserModel } from "./types";
 
 const App = () => {
+//мы тут сделали дз
+ 
+  const [isLogin, setIsLogin] = useState<boolean >(false)
 
-  const [editedUser, setEditedUser] = useState<UserModel | null >(null)
+   const [editedUser, setEditedUser] = useState<UserModel | null >(null)
 
   return (
     <div className=" d-flex flex-column gap-3 align-items-center p-3">
