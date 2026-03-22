@@ -10,7 +10,9 @@ const App = () => {
  
   const [isLogin, setIsLogin] = useState<boolean >(false)
 
-   const [editedUser, setEditedUser] = useState<UserModel | null >(null)
+   
+  const [editedUser, setEditedUser] = useState<UserModel | null >(null)
+  //изменение с пдф
 
   return (
     <div className=" d-flex flex-column gap-3 align-items-center p-3">
