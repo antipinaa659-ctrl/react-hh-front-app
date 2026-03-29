@@ -1,4 +1,5 @@
 import type { UserModel } from "./types";
+const PATH = "/resume-pdf/";
 
 
 interface UserRowProps {
@@ -39,9 +40,24 @@ export const UserRow = ({ line, user, onDeleteClick, onEditClick, isUserDeleting
       </div>
 
       {!isUserDeleting&& (
-      <div onClick={()=> onEditClick(user)} 
-      style={{cursor: "pointer"}}>✏️</div>
+      <div  
+      onClick={()=> {window.open(PATH + user.resume,"_blank")
+
+      }} 
+      style={{cursor: "pointer"}}>
+        📝
+        </div>
       )}
+
+      {!isUserDeleting&& (
+      <div
+       onClick={()=> onEditClick(user)} 
+      style={{cursor: "pointer"}}>
+        ✏️
+        </div>
+      )}
+
+      
       
 
 

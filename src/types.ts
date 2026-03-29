@@ -7,6 +7,7 @@ export interface UserModel {
   age: number;
   isCitizen: boolean;
   createDate: string;
+  resume: string;
   
   
 }
@@ -19,6 +20,7 @@ export interface CreateUserInput {
   phoneNumber: string;
   age: number;
   isCitizen: boolean;
+  resume: string;
   
   
 }
