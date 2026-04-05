@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import type { CreateUserInput } from "../types";
-import { post } from "../api";
+import type { CreateUserInput } from "../lib/types";
+import { post } from "./api";
 
 export const useCreateUser = () => {
   return useMutation({

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import type { CreateUserInput, UserModel } from "./types";
-import { useCreateUser } from "./api-methods/create-user";
-import { useGetUsers } from "./api-methods/get-user";
+import type { CreateUserInput, UserModel } from "../lib/types";
+import { useCreateUser } from "../api-methods/create-user";
+import { useGetUsers } from "../api-methods/get-user";
 
 interface TextValidation {
   isLenghtValid: boolean;

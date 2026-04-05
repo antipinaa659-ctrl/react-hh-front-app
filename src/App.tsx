@@ -1,9 +1,9 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { UserList } from "./user-list";
-import { CreateUserForm } from "./create-user-form";
+import { CreateUserForm } from "./components/create-user-form";
 import { useState } from "react";
-import type { UserModel } from "./types";
+import type { UserModel } from "./lib/types";
+import { UserList } from "./components/user-list";
 
 const App = () => {
 
@@ -13,6 +13,7 @@ const App = () => {
     <div className=" d-flex flex-column gap-3 align-items-center p-3">
      <CreateUserForm editedUser = {editedUser} onClick ={() => setEditedUser (null) }  />
      <UserList onEditClick={setEditedUser} editedUser={editedUser}/>
+      
     </div>
   );
 };

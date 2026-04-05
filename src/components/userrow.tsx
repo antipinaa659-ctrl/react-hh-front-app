@@ -1,4 +1,5 @@
-import type { UserModel } from "./types";
+import type { UserModel } from "../lib/types";
+
 const PATH = "/resume-pdf/";
 
 

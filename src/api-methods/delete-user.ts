@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { del } from "../api";
+import { del } from "./api";
 
 //вызывает удаление метода 
 export const useDeleteUser = () => {
