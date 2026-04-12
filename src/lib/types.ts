@@ -24,3 +24,26 @@ export interface CreateUserInput {
   
   
 }
+
+export interface TextValidation {
+  isLenghtValid: boolean;
+  isSpecialSymbolValid: boolean;
+  isTextEmptyValid: boolean;
+  isFirstUpperCaseValid: boolean;
+  isValid: boolean;
+  isTouched: boolean;
+}
+
+interface BaseField{
+  isValid: boolean;
+  isTouched: boolean;
+  errorText: string | null;
+}
+
+export interface TextField extends BaseField{
+  text: string;
+}
+
+export interface NumberField extends BaseField {
+  number: number | null;
+}

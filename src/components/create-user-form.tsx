@@ -1,16 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import type { CreateUserInput, UserModel } from "../lib/types";
+import type { CreateUserInput, TextValidation, UserModel } from "../lib/types";
 import { useCreateUser } from "../api-methods/create-user";
 import { useGetUsers } from "../api-methods/get-user";
+import { Container } from "../shared/container";
 
-interface TextValidation {
-  isLenghtValid: boolean;
-  isSpecialSymbolValid: boolean;
-  isTextEmptyValid: boolean;
-  isFirstUpperCaseValid: boolean;
-  isValid: boolean;
-  isTouched: boolean;
-}
+
 
 const isLastNameValidationDefult = {
   isLenghtValid: false,
@@ -287,13 +281,11 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
     setResumeValid(true);
   };
 
-  const handleDeleteResume= () =>{
-
-      setResume(null);
-      setResumeValid(false);
-      setIsResumeTouched(false);
-
-  }
+  const handleDeleteResume = () => {
+    setResume(null);
+    setResumeValid(false);
+    setIsResumeTouched(false);
+  };
 
   const hasFirstName = firstName !== undefined && firstName.length > 0;
   const hasLastName = lastName !== undefined && lastName.length > 0;
@@ -301,10 +293,7 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
   //
 
   return (
-    <div
-      style={{ width: "400px" }}
-      className="d-flex flex-column gap-2 p-2 w-25 bg-light shadow p-3 rounded-3"
-    >
+    <Container>
       <input
         value={lastName}
         onChange={(e) => handleOnLastNameChange(e.target.value)}
@@ -445,7 +434,10 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
           className="w-100 p-2 rounded-2 d-flex flex-row align-items-center justify-content-between"
         >
           <span>{resume}</span>
-          <button onClick={handleDeleteResume} className="btn btn-close"></button>
+          <button
+            onClick={handleDeleteResume}
+            className="btn btn-close"
+          ></button>
         </div>
       )}
 
@@ -498,6 +490,6 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
           Отмена
         </button>
       )}
-    </div>
+    </Container>
   );
 };
