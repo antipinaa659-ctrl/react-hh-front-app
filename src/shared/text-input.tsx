@@ -26,9 +26,9 @@ export const TextInput = ({
         placeholder={placeHolder}
         disabled={isDisabled}
       />
-      {field.errorText && (
+      {/* {field.errorText && (
         <span className="text-danger">{field.errorText}</span>
-      )}
+      )} */}
     </div>
   );
 };

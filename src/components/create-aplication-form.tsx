@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Container } from "../shared/container";
-import type { NumberField, TextField } from "../lib/types";
+import type { CheckboxField, NumberField, TextField } from "../lib/types";
 import { TextInput } from "../shared/text-input";
 import { NumberInput } from "../shared/number-input ";
+import { CheckBoxInput } from "../shared/checkbox-input";
+import { CITIES } from "../lib/data";
 
 export const CreateApplicationForm = () => {
-
-
-
   const [title, setTitle] = useState<TextField>({
     text: "",
     isTouched: false,
@@ -26,59 +25,109 @@ export const CreateApplicationForm = () => {
     isValid: false,
   } as NumberField);
 
+  const [isCitizen, setCitizen] = useState<CheckboxField>({
+    status: false,
+    isTouched: false,
+    isValid: false,
+  } as CheckboxField);
 
-
-
+  const [isCitySelect, setCitySelect] = useState<boolean>(false);
 
   const handleOnTitleChange = (inputText: string) => {
-
     const isTitleValid = inputText.length > 5;
+    const errosMsgs = [] as string[];
+
+    if (!isTitleValid) {
+      errosMsgs.push("Слишком короткое наименование вакансии");
+    }
 
     setTitle({
       text: inputText,
       isTouched: true,
       isValid: isTitleValid,
-      errorText: isTitleValid ? null : "Слишком короткое наименование вакансии",
+      errors: errosMsgs,
     } as TextField);
   };
 
+  const hendleOnCityChange = (InputText: string) => {
+    const isCityValid = InputText.length >= 2;
+    const isFirstLetterValid =
+      InputText.length &&
+      InputText.charAt(0) !== InputText.charAt(0).toLocaleLowerCase();
 
+    const errosMsgs = [] as string[];
 
-  const hendleOnCityChange =(InputText: string) =>{
-    const isCityValid = InputText.length >2;
+    if (!isCityValid) {
+      errosMsgs.push("Слишком короткое наименование");
+    }
+    if (InputText !== "" && !isFirstLetterValid) {
+      errosMsgs.push("Название города должно начинатося с заглавной буквы");
+    }
 
     setCity({
-        text: InputText,
-        isTouched: true,
-        isValid: isCityValid,
-        errorText: isCityValid ? null: "Город не может быть менее 2 букв"
-    })
-
+      text: InputText,
+      isTouched: true,
+      isValid: isCityValid && isFirstLetterValid,
+      errors: errosMsgs,
+    } as TextField);
   };
 
-  const hendleOnSalaryChange =(inputNumber: number | null) =>{
-    
+  const hendleOnSalaryChange = (inputNumber: number | null) => {
+    const hasSalary = inputNumber !== null;
+    const isSalaryValid =
+      inputNumber !== null && hasSalary && inputNumber < 999_999_9;
 
-    const hasSalary= inputNumber !== null;
-    const isSalaryValid = hasSalary && inputNumber < 999_999_9;
+    const errorsMsgs = [] as string[];
 
-    const errorMsg = hasSalary && ! isSalaryValid ? "Слишком большое 3начение":" Укажите зарплату";
-    
+    if (!hasSalary) {
+      errorsMsgs.push("Укажите зарплату");
+    }
 
+    if (hasSalary && !isSalaryValid) {
+      errorsMsgs.push("Слишком большое 3начение");
+    }
 
     setSalary({
-        number: inputNumber,
-        isTouched: true,
-        isValid: isSalaryValid,
-        errorText: isSalaryValid ? null: errorMsg,
+      number: inputNumber,
+      isTouched: true,
+      isValid: isSalaryValid,
+      errors: errorsMsgs,
     } as NumberField);
-
   };
 
+  const handlOnCitizenChange = (s: boolean) => {
+    setCitizen({
+      status: s,
+      isTouched: false,
+      isValid: true,
+      errors: [] as string[],
+    } as CheckboxField);
+  };
+
+  const handleOnCitySelectCange = (inputCity: string) => {
+    setCity({
+      text: inputCity,
+      isTouched: true,
+      isValid: true,
+      errors: [] as string[],
+    } as TextField);
+  };
+
+  const handleOnSwitchChange = (v: boolean) => {
+   
+      //переключается на ввод в ручную то город стереть
+      //то город стереть 
+      setCity({
+        text: "",
+        isTouched: false,
+        isValid: false,
+        errors: [] as [],
+      } as TextField);
+    
+    setCitySelect(v);
+  };
 
   const isApplicationCreating = false;
-
-
 
   return (
     <Container>
@@ -87,23 +136,61 @@ export const CreateApplicationForm = () => {
         onChange={handleOnTitleChange}
         placeHolder="Наименование"
         isDisabled={isApplicationCreating}
-        width = {500}
+        width={500}
       />
 
-      <TextInput
-        field={city}
-        onChange={hendleOnCityChange}
-        placeHolder="Город"
-        isDisabled={isApplicationCreating}
-        width = {500}
-      />
+      {!isCitySelect && (
+        <TextInput
+          field={city}
+          onChange={hendleOnCityChange}
+          placeHolder="Город"
+          isDisabled={isApplicationCreating}
+          width={500}
+        />
+      )}
+
+      {isCitySelect && (
+        <select
+          onChange={(e) => handleOnCitySelectCange(e.target.value)}
+          value={city.text}
+          className="form-select "
+        >
+          <option value="" disabled hidden>
+            Выбрать город
+          </option>
+
+          {CITIES.map((c, i) => (
+            <option key={c + i} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      )}
+
+      <div className="form-check form-switch">
+        <input
+          checked={isCitySelect}
+          onChange={(e) => handleOnSwitchChange(e.target.checked)}
+          className="form-check-input"
+          type="checkbox"
+          role="switch"
+        />
+        <span>Выбрать город из списка</span>
+      </div>
 
       <NumberInput
         field={salary}
         onChange={hendleOnSalaryChange}
         placeHolder="Зарплата"
         isDisabled={isApplicationCreating}
-        width = {500}
+        width={500}
+      />
+
+      <CheckBoxInput
+        field={isCitizen}
+        onChange={handlOnCitizenChange}
+        isDisabled={isApplicationCreating}
+        label="Только для граждан РФ"
       />
     </Container>
   );

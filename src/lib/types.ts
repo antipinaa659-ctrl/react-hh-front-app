@@ -37,7 +37,7 @@ export interface TextValidation {
 interface BaseField{
   isValid: boolean;
   isTouched: boolean;
-  errorText: string | null;
+  errors: string[];
 }
 
 export interface TextField extends BaseField{
@@ -46,4 +46,8 @@ export interface TextField extends BaseField{
 
 export interface NumberField extends BaseField {
   number: number | null;
+}
+
+export interface CheckboxField extends BaseField {
+  status: boolean;
 }
