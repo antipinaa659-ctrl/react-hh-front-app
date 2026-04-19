@@ -1,4 +1,14 @@
 
 export const INPUT_WIDTH = 300 ;
 
-export const CITIES = ["M", "S"] as string[]
+export const CITIES = [
+     "Москва",
+     "Санкт-Питербург",
+     "Ростов на Дону",
+     "Краснодар",
+     "Новороссийск",
+     "Екатеренбург",
+     "Новосибирск",
+     "Кемерово",
+     "Игркутск"
+    ] as string[]

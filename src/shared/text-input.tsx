@@ -26,9 +26,15 @@ export const TextInput = ({
         placeholder={placeHolder}
         disabled={isDisabled}
       />
-      {/* {field.errorText && (
-        <span className="text-danger">{field.errorText}</span>
-      )} */}
+      <div className="d-flex flex-column">
+        {field.errors &&
+          field.errors.length > 0 &&
+          field.errors.map((e, i) => (
+            <span className="text-danger" key={i}>
+              {e}
+            </span>
+          ))}
+      </div>
     </div>
   );
 };
