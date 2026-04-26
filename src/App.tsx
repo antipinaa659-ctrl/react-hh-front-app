@@ -12,8 +12,8 @@ const App = () => {
 
   return (
     <div className=" d-flex flex-column gap-3 align-items-center p-3">
-     {/* <CreateUserForm editedUser = {editedUser} onClick ={() => setEditedUser (null) }  />
-     <UserList onEditClick={setEditedUser} editedUser={editedUser}/> */}
+     <CreateUserForm editedUser = {editedUser} onClick ={() => setEditedUser (null) }  />
+     <UserList onEditClick={setEditedUser} editedUser={editedUser}/>
     
      <CreateApplicationForm/>
     </div>

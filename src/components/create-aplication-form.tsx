@@ -5,6 +5,8 @@ import { TextInput } from "../shared/text-input";
 import { NumberInput } from "../shared/number-input ";
 import { CheckBoxInput } from "../shared/checkbox-input";
 import { CITIES } from "../lib/data";
+import { SelectInput } from "../shared/select-input";
+import { SwitchInput } from "../shared/switch-input";
 
 export const CreateApplicationForm = () => {
   const [title, setTitle] = useState<TextField>({
@@ -150,24 +152,40 @@ export const CreateApplicationForm = () => {
       )}
 
       {isCitySelect && (
-        <select
-          onChange={(e) => handleOnCitySelectCange(e.target.value)}
-          value={city.text}
-          className="form-select "
-        >
-          <option value="" disabled hidden>
-            Выбрать город
-          </option>
 
-          {CITIES.map((c, i) => (
-            <option key={c + i} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+          <SelectInput 
+          value = {city.text} 
+          list ={CITIES} 
+          text= "Выберете город" 
+          onSelect={handleOnCitySelectCange}
+          />
+
+        // так было ранее заменили на то что выше
+
+        // <select    
+        //   onChange={(e) => handleOnCitySelectCange(e.target.value)}
+        //   value={city.text}
+        //   className="form-select "
+        // >
+        //   <option value="" disabled hidden>
+        //     Выбрать город
+        //   </option>
+
+        //   {CITIES.map((c, i) => (
+        //     <option key={c + i} value={c}>
+        //       {c}
+        //     </option>
+        //   ))}
+        // </select>
       )}
 
-      <div className="form-check form-switch">
+      <SwitchInput 
+      text="Выбрать город из списка"
+      isChecked={isCitySelect}
+      onChange={handleOnSwitchChange}
+      />
+
+      {/* <div className="form-check form-switch">
         <input
           checked={isCitySelect}
           onChange={(e) => handleOnSwitchChange(e.target.checked)}
@@ -176,7 +194,7 @@ export const CreateApplicationForm = () => {
           role="switch"
         />
         <span>Выбрать город из списка</span>
-      </div>
+      </div> */}
 
       <NumberInput
         field={salary}
