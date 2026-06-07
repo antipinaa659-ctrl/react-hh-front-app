@@ -5,6 +5,6 @@ import { del } from "./api";
 export const useDeleteUser = () => {
   return useMutation({
     mutationFn: (userId: number) =>
-      del<boolean>(`/auth/delete/${userId}`),
+      del<boolean>(`/users/${userId}`),
   });
 };

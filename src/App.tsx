@@ -3,8 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { CreateUserForm } from "./components/create-user-form";
 import { useState } from "react";
 import type { UserModel } from "./lib/types";
-import { UserList } from "./components/user-list";
+import { UserList } from "./components/user-list/user-list";
 import { CreateApplicationForm } from "./components/create-aplication-form";
+import { VacancyList } from "./components/vacancy-list/vacavcy-list";
 
 const App = () => {
 
@@ -12,10 +13,11 @@ const App = () => {
 
   return (
     <div className=" d-flex flex-column gap-3 align-items-center p-3">
-     <CreateUserForm editedUser = {editedUser} onClick ={() => setEditedUser (null) }  />
-     <UserList onEditClick={setEditedUser} editedUser={editedUser}/>
+     {/* <CreateUserForm editedUser = {editedUser} onClick ={() => setEditedUser (null) }  /> */}
+     {/* <UserList onEditClick={setEditedUser} editedUser={editedUser}/> */}
     
      <CreateApplicationForm/>
+     <VacancyList/>
     </div>
   );
 };

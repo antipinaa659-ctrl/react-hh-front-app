@@ -7,7 +7,16 @@ export interface UserModel {
   age: number;
   isCitizen: boolean;
   createDate: string;
-  resume: string;
+  resumePath: string;
+  
+  
+}
+
+export interface VacancyModel {
+  id: number;
+title: string;
+city: string;
+salary: number
   
   
 }
@@ -24,6 +33,17 @@ export interface CreateUserInput {
   
   
 }
+
+ export interface CreateVacancyInput{
+    id: number,
+    title : string,
+    city: string,
+    salary: number,
+    isCityzen: boolean,
+    userId: number,
+    description: string;
+    
+  }
 
 export interface TextValidation {
   isLenghtValid: boolean;

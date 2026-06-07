@@ -1,37 +1,57 @@
 import { useState } from "react";
 import { Container } from "../shared/container";
-import type { CheckboxField, NumberField, TextField } from "../lib/types";
+import type { CheckboxField, CreateVacancyInput, NumberField, TextField } from "../lib/types";
 import { TextInput } from "../shared/text-input";
 import { NumberInput } from "../shared/number-input ";
 import { CheckBoxInput } from "../shared/checkbox-input";
 import { CITIES } from "../lib/data";
-import { SelectInput } from "../shared/select-input";
+import { SelectInput, type SelectInputOption } from "../shared/select-input";
 import { SwitchInput } from "../shared/switch-input";
+import { useCreateVacancy } from "../api-methods/create-vacancy";
+import { Column } from "../shared/column";
+import { useGetUsers } from "../api-methods/get-user";
 
-export const CreateApplicationForm = () => {
-  const [title, setTitle] = useState<TextField>({
+const DEFAULT_TITLE = {
+
     text: "",
     isTouched: false,
     isValid: false,
-  } as TextField);
-
-  const [city, setCity] = useState<TextField>({
+  } as TextField
+ const DEFAULT_CITY = {
     text: "",
     isTouched: false,
     isValid: false,
-  } as TextField);
-
-  const [salary, setSalary] = useState<NumberField>({
+  } as TextField
+ 
+const DEFAULT_SALARY = {
     number: null,
     isTouched: false,
     isValid: false,
-  } as NumberField);
+  } as NumberField
 
-  const [isCitizen, setCitizen] = useState<CheckboxField>({
+const DEFAULT_ISCITIZEN = {
     status: false,
     isTouched: false,
     isValid: false,
-  } as CheckboxField);
+  } as CheckboxField
+
+  
+
+export const CreateApplicationForm = () => {
+
+  const {data: users,isLoading: isUsersLoading,isRefetching: isUsersRefetching,} = useGetUsers();
+
+  const { mutate: createVacancy, isPending: isVacancyCreating } = useCreateVacancy();
+
+  const [title, setTitle] = useState<TextField>(DEFAULT_TITLE);
+
+  const [city, setCity] = useState<TextField>(DEFAULT_CITY );
+  const [cityId, setCityId] = useState<number>(0 );
+  const [userId, setUserId] = useState<number>(0 );
+
+  const [salary, setSalary] = useState<NumberField>(DEFAULT_SALARY);
+
+  const [isCitizen, setCitizen] = useState<CheckboxField>(DEFAULT_ISCITIZEN);
 
   const [isCitySelect, setCitySelect] = useState<boolean>(false);
 
@@ -106,9 +126,13 @@ export const CreateApplicationForm = () => {
     } as CheckboxField);
   };
 
-  const handleOnCitySelectCange = (inputCity: string) => {
+  const handleOnCitySelectCange = (inputCity: number) => {
+
+    setCityId(inputCity);
+
+
     setCity({
-      text: inputCity,
+      text: CITIES.find(c=> c.id == inputCity)?.label ?? 0,
       isTouched: true,
       isValid: true,
       errors: [] as string[],
@@ -129,10 +153,45 @@ export const CreateApplicationForm = () => {
     setCitySelect(v);
   };
 
-  const isApplicationCreating = false;
+ 
+
+  const handlOnVacancyCreate = () => {
+
+    var input = {
+      id: -1,
+      title: title.text,
+      city: city.text,
+      salary: salary.number,
+      isCityzen: isCitizen.status,
+      userId : userId,
+      description: "test"
+    } as CreateVacancyInput;
+
+    createVacancy(input, {onSuccess: (id:number) => { 
+      console.log("Created: " + id );
+      resetForm();
+    } })
+
+  };
+
+  const resetForm = () => {
+   
+    setCityId(0)
+    setUserId(0)
+    setTitle(DEFAULT_TITLE)
+    setCity(DEFAULT_CITY)
+    setSalary(DEFAULT_SALARY)
+    setCitizen(DEFAULT_ISCITIZEN)
+    setCitySelect(false)
+  }
+
+  const isApplicationCreating = isVacancyCreating;
+  const isFormValid = userId> 0 && title.isValid && salary.isValid && city.isValid;
+
 
   return (
     <Container>
+     <Column>
       <TextInput
         field={title}
         onChange={handleOnTitleChange}
@@ -154,29 +213,12 @@ export const CreateApplicationForm = () => {
       {isCitySelect && (
 
           <SelectInput 
-          value = {city.text} 
+          value = {cityId} 
           list ={CITIES} 
           text= "Выберете город" 
           onSelect={handleOnCitySelectCange}
           />
 
-        // так было ранее заменили на то что выше
-
-        // <select    
-        //   onChange={(e) => handleOnCitySelectCange(e.target.value)}
-        //   value={city.text}
-        //   className="form-select "
-        // >
-        //   <option value="" disabled hidden>
-        //     Выбрать город
-        //   </option>
-
-        //   {CITIES.map((c, i) => (
-        //     <option key={c + i} value={c}>
-        //       {c}
-        //     </option>
-        //   ))}
-        // </select>
       )}
 
       <SwitchInput 
@@ -210,6 +252,24 @@ export const CreateApplicationForm = () => {
         isDisabled={isApplicationCreating}
         label="Только для граждан РФ"
       />
+
+      <SelectInput 
+          value = {userId} 
+          list ={users?.map( u => ({id: u.id, label: u.firstName+" "+ u.lastName+"-"+ u.patronymic} as SelectInputOption)) ?? []} 
+          text= "Выберете работодателя" 
+          onSelect={(id) => setUserId(id)}
+          isLoading ={isUsersLoading||isUsersRefetching}
+          />
+
+      <button 
+      onClick = {handlOnVacancyCreate}
+      disabled ={isApplicationCreating || !isFormValid}
+      className = "btn btn-success w-100"
+      >
+        Добавить 
+      </button>
+      </Column>
+
     </Container>
   );
 };

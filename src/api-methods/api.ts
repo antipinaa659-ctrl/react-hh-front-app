@@ -45,6 +45,24 @@ export const post = <TReq, TRes>(
     ...init,
   });
 
+
+  // PUT
+export const put = <TReq, TRes>(
+  path: string,
+  body: TReq,
+  init?: RequestInit,
+) =>
+  api<TRes>(path, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
+    body: JSON.stringify(body),
+    ...init,
+  });
+
+
  //delete
  
   export const del = <TRes>(path: string, init?: RequestInit) =>
@@ -55,3 +73,5 @@ export const post = <TReq, TRes>(
     },
     ...init,
   });
+
+

@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import type { UserModel } from "../lib/types";
 import { api } from "./api";
 
-const UsersQueryKey = ["UsersQueryKey"];
+export const UsersQueryKey = ["UsersQueryKey"] as const;
 
 export const useGetUsers = () => {
   return useQuery({
-    queryKey: [UsersQueryKey],
-    queryFn: () => api<Array<UserModel>>("/auth/users"),
+    queryKey: UsersQueryKey,
+    queryFn: () => api<Array<UserModel>>("/users/all"),
   });
 };

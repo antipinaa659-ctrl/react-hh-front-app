@@ -15,6 +15,7 @@ import { CheckBoxInput } from "../shared/checkbox-input";
 import { Row } from "../shared/row";
 import { Column } from "../shared/column";
 import { PhoneInput } from "../shared/phone-input";
+import { useUpdateUser } from "../api-methods/update-user";
 
 interface CreateFormProps {
   editedUser: UserModel | null;
@@ -62,9 +63,12 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
 
   const { mutate: createUser, isPending: isUserCreating } = useCreateUser();
 
+  const { mutate: updateUser, isPending: isUserUpdating } = useUpdateUser();
+  
+
   const hadnleCreate = () => {
     const input = {
-      id: editedUser?.id ?? -1,
+      id: -1,
       firstName: firstName.text,
       lastName: lastName.text,
       patronymic: patronymic.text,
@@ -82,6 +86,44 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
     refetchUsers();
     onClick();
   };
+
+
+  const handleUpdate = () => {
+
+    const input = {
+      id: editedUser?.id,
+      firstName: firstName.text,
+      lastName: lastName.text,
+      patronymic: patronymic.text,
+      phoneNumber: "+7" + phoneNumber.text,
+      age: age.number,
+      isCitizen: isCitizen.status,
+      resume: resume,
+    } as CreateUserInput;
+
+    updateUser(input, { onSuccess: onUpdateSuccess });
+
+  }
+
+  const onUpdateSuccess = () => {
+
+     resetForm();
+    refetchUsers();
+    onClick();
+  }
+
+
+  const handleSubmit = () => {
+
+    if (editedUser){
+      handleUpdate();
+    }
+    else{
+      hadnleCreate();
+    }
+
+  }
+
 
   const resetForm = () => {
     setFirstName(DEFAULT_FIRST_NAME);
@@ -154,8 +196,10 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
       isValid: true,
     } as TextField);
 
+
+    const cleanPhoneNumber = editedUser.phoneNumber.substring(2);
     setPhoneNumber({
-      text: editedUser?.phoneNumber,
+      text: cleanPhoneNumber,
       isTouched: true,
       isValid: true,
     }as TextField);
@@ -166,9 +210,9 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
       isValid: true,
     } as CheckboxField);
 
-    setResume(editedUser?.resume);
+    setResume(editedUser?.resumePath);
 
-    
+    console.log(editedUser)
 
     setResumeValid(true);
     setIsResumeTouched(true);
@@ -348,6 +392,8 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
     } as CheckboxField);
   };
 
+  const isLoading = isUserCreating || isUserUpdating;
+
   return (
     <Container>
 
@@ -355,26 +401,26 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
        <TextInput
         field={firstName}
         placeHolder="Имя"
-        isDisabled={isUserCreating}
+        isDisabled={isLoading}
         onChange={handleOnNameChange}
       />
       <TextInput
         field={lastName}
         placeHolder="Фамилия"
-        isDisabled={isUserCreating}
+        isDisabled={isLoading}
         onChange={handleOnLastNameChange}
       />
       <TextInput
         field={patronymic}
         placeHolder="Отчество"
-        isDisabled={isUserCreating}
+        isDisabled={isLoading}
         onChange={handleOnPatronymicChange}
       />
 
       <PhoneInput
         field={phoneNumber}
          placeHolder="900 000 00 00"
-        isDisabled={isUserCreating}
+        isDisabled={isLoading}
         onChange={handleOnPhoneNumberChange}
       />
 
@@ -384,14 +430,14 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
           field={age}
           placeHolder="Возраст"
           onChange={handleAgeChange}
-          isDisabled={isUserCreating}
+          isDisabled={isLoading}
           width={100}
         />
 
         <CheckBoxInput
           field={isCitizen}
           onChange={handleOnCitizenChange}
-          isDisabled={isUserCreating}
+          isDisabled={isLoading}
           label="Гражданин РФ"
           width={150}
         />
@@ -434,7 +480,7 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
 
       <button
         disabled={
-          isUserCreating ||
+          isLoading ||
           !firstName.isValid ||
           !lastName.isValid ||
           !phoneNumber.isValid ||
@@ -442,10 +488,10 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
           resume === null ||
           !isResumeValid
         } // isPatronymicValid убрала блокировку кнопки на отчество
-        onClick={hadnleCreate}
+        onClick={handleSubmit}
         className={`btn btn-${editedUser ? "primary" : "success"}`}
       >
-        {isUserCreating
+        {isLoading
           ? `${editedUser ? "Сохранение..." : "Добавление..."}`
           : `${editedUser ? "Сохранить" : "Добавить"}`}
       </button>
@@ -453,7 +499,7 @@ export const CreateUserForm = ({ editedUser, onClick }: CreateFormProps) => {
       {editedUser && (
         <button
           onClick={onClick}
-          disabled={isUserCreating}
+          disabled={isLoading}
           className="btn btn-danger"
         >
           Отмена

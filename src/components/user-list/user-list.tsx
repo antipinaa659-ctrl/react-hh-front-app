@@ -1,7 +1,9 @@
-import { useDeleteUser } from "../api-methods/delete-user";
-import { useGetUsers } from "../api-methods/get-user";
-import type { UserModel } from "../lib/types";
+import { useState } from "react";
+import { useDeleteUser } from "../../api-methods/delete-user";
+import { useGetUsers, UsersQueryKey } from "../../api-methods/get-user";
+import type { UserModel } from "../../lib/types";
 import { UserRow } from "./userrow";
+import { useQueryClient } from "@tanstack/react-query";
 
 
   interface UserListProps{
@@ -11,23 +13,52 @@ import { UserRow } from "./userrow";
 
 export const UserList = ({editedUser, onEditClick} : UserListProps) => {
 
+  const queryClient = useQueryClient();
+
+  const [deletingUserIds, setDeletingId] = useState<number[]>([]);
+
   const {
     data: users,
     isLoading: isUsersLoading,
-    refetch: refetchUsers,
     isRefetching: isUsersRefetching,
   } = useGetUsers();
 
     const { mutate: deleteUser, isPending: isUserDeleting } = useDeleteUser();
   
-    const handnleDelete = (id: number) => {
-      deleteUser(id, { onSuccess: onDeleteSuccess });
+    const handnleDelete = (id: number) => { 
+
+      const ids = [...deletingUserIds, id];
+      setDeletingId(ids)
+
+      deleteUser(id, { onSuccess: () => onDeleteSuccess(id) });
     };
   
-    const onDeleteSuccess = () => {
-      refetchUsers();
+
+
+
+
+
+    const onDeleteSuccess = (id: number) => {
+
+      const newIds = deletingUserIds.filter(i => i !==id);
+      setDeletingId(newIds);
+
+      queryClient.setQueryData<UserModel[]>(UsersQueryKey, (cached) =>{
+        if (!cached){
+          return cached;
+        }
+
+        return cached.filter(u => u.id !== id);
+      })
+
     };
   
+
+
+
+
+
+    
     const isListLoading = isUsersLoading || isUsersRefetching;
     
 
@@ -45,7 +76,8 @@ export const UserList = ({editedUser, onEditClick} : UserListProps) => {
               user={u}
               onDeleteClick={handnleDelete}
               onEditClick={onEditClick}
-              isUserDeleting={isUserDeleting}
+              isUserDeleting={deletingUserIds.some(id => id === u.id)}
+              isUserOtherDeleting ={isUserDeleting}
               isUserSelected={editedUser?.id == u.id}
               line={i+1}
               
